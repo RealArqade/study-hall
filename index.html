@@ -4,7 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="refresh" content="0; url=valence-lab.html">
-<script>location.replace('valence-lab.html' + location.search + location.hash);</script>
+<script>
+  // Canonical domain: send github.io visitors to the custom domain instead.
+  var CANONICAL_HOST = "studyhall.realarqade.com";
+  var onCanonical = location.hostname === CANONICAL_HOST || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  var base = onCanonical ? "" : "https://" + CANONICAL_HOST;
+  location.replace(base + "/valence-lab.html" + location.search + location.hash);
+</script>
 <title>Study Hall</title>
 </head>
 <body>Redirecting to <a href="valence-lab.html">Study Hall</a>&hellip;</body>
