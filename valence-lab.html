@@ -283,11 +283,93 @@
       footer .mono{opacity:.8;}
 
       [hidden]{display:none !important;}
+
+      /* ---- site nav ---- */
+      .site-nav{
+        position:sticky; top:env(safe-area-inset-top,0px); z-index:6;
+        display:flex; align-items:center; justify-content:space-between; gap:10px;
+        background:var(--bg); padding:10px 0; border-bottom:1px solid var(--border);
+      }
+      .site-nav-brand{
+        font-family:'Big Shoulders Display', system-ui, sans-serif; font-weight:800;
+        text-transform:uppercase; letter-spacing:.02em; font-size:16px; color:var(--ink);
+        text-decoration:none;
+      }
+      .site-nav-brand:hover{color:var(--accent);}
+      .site-nav-links{display:flex; align-items:center; gap:8px;}
+      .site-nav-btn{
+        appearance:none; border:1px solid var(--border); background:var(--surface); color:var(--ink-dim);
+        font-family:'IBM Plex Sans'; font-weight:600; font-size:12.5px; text-decoration:none;
+        padding:6px 10px; border-radius:7px; cursor:pointer; transition:border-color .15s,color .15s;
+      }
+      .site-nav-btn:hover{border-color:var(--accent); color:var(--ink);}
+      @media (max-width:460px){
+        .site-nav-btn{padding:6px 8px; font-size:11.5px;}
+      }
+
+      /* ---- modal (README viewer) ---- */
+      .modal-backdrop{
+        position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.5);
+        display:flex; align-items:flex-start; justify-content:center;
+        padding:env(safe-area-inset-top,0px) 16px 24px; overflow-y:auto;
+      }
+      .modal{
+        background:var(--surface); border:1px solid var(--border); border-radius:16px;
+        max-width:680px; width:100%; margin-top:40px; max-height:85vh; display:flex; flex-direction:column;
+        overflow:hidden;
+      }
+      .modal-head{
+        display:flex; align-items:center; justify-content:space-between; gap:10px;
+        padding:16px 18px; border-bottom:1px solid var(--border); flex-shrink:0;
+      }
+      .modal-head h2{font-size:18px; color:var(--ink);}
+      .modal-close{
+        appearance:none; border:none; background:transparent; color:var(--ink-dim); font-size:16px;
+        cursor:pointer; line-height:1; padding:4px;
+      }
+      .modal-close:hover{color:var(--ink);}
+      .modal-body{padding:18px; overflow-y:auto; color:var(--ink); font-size:13.5px; line-height:1.6;}
+      .modal-body h1, .modal-body h2, .modal-body h3{
+        font-family:'Big Shoulders Display', system-ui, sans-serif; text-transform:none;
+        letter-spacing:0; margin:18px 0 8px; color:var(--ink);
+      }
+      .modal-body h1:first-child, .modal-body h2:first-child{margin-top:0;}
+      .modal-body p{margin:0 0 10px;}
+      .modal-body ul, .modal-body ol{margin:0 0 10px; padding-left:22px;}
+      .modal-body li{margin-bottom:4px;}
+      .modal-body code{
+        font-family:'IBM Plex Mono', monospace; font-size:12px; background:var(--surface-2);
+        padding:1px 5px; border-radius:4px;
+      }
+      .modal-body a{color:var(--accent);}
+      .modal-body table{border-collapse:collapse; width:100%; margin:0 0 14px; font-size:12.5px;}
+      .modal-body th, .modal-body td{border:1px solid var(--border); padding:6px 9px; text-align:left;}
+      .modal-body th{background:var(--surface-2);}
+      .modal-fallback{color:var(--ink-dim);}
+      .modal-fallback a{color:var(--accent);}
     </style>
   </head>
   <body>
 
     <div class="wrap">
+
+      <nav class="site-nav">
+        <a href="#/" class="site-nav-brand">Study Hall</a>
+        <div class="site-nav-links">
+          <button class="site-nav-btn" id="readmeBtn" type="button">Read Me</button>
+          <a class="site-nav-btn" href="https://github.com/RealArqade/study-hall" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </nav>
+
+      <div class="modal-backdrop" id="readmeBackdrop" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="readmeModalTitle">
+          <div class="modal-head">
+            <h2 id="readmeModalTitle">README</h2>
+            <button class="modal-close" id="readmeClose" type="button" aria-label="Close">✕</button>
+          </div>
+          <div class="modal-body mono" id="readmeBody">Loading…</div>
+        </div>
+      </div>
 
       <section id="homeView">
         <header class="home-header">
@@ -385,6 +467,7 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" defer></script>
     <script>
     (function(){
       "use strict";
@@ -4241,6 +4324,52 @@
         homeView.hidden = false;
         courseViewEl.hidden = true;
         document.title = "Study Hall";
+      }
+
+      // ---------- README viewer modal ----------
+      var readmeBtn = document.getElementById("readmeBtn");
+      var readmeBackdrop = document.getElementById("readmeBackdrop");
+      var readmeClose = document.getElementById("readmeClose");
+      var readmeBody = document.getElementById("readmeBody");
+      var readmeLoaded = false;
+
+      function openReadme(){
+        readmeBackdrop.hidden = false;
+        if (!readmeLoaded) {
+          readmeLoaded = true;
+          fetch("README.md").then(function(res){
+            if (!res.ok) throw new Error("fetch failed");
+            return res.text();
+          }).then(function(text){
+            if (typeof marked !== "undefined" && marked.parse) {
+              readmeBody.innerHTML = marked.parse(text);
+              readmeBody.classList.remove("mono");
+            } else {
+              var pre = document.createElement("pre");
+              pre.style.whiteSpace = "pre-wrap";
+              pre.textContent = text;
+              readmeBody.innerHTML = "";
+              readmeBody.appendChild(pre);
+            }
+          }).catch(function(){
+            readmeLoaded = false;
+            readmeBody.innerHTML =
+              '<p class="modal-fallback">Couldn\'t load the README here. ' +
+              '<a href="https://github.com/RealArqade/study-hall#readme" target="_blank" rel="noopener">View it on GitHub instead →</a></p>';
+          });
+        }
+      }
+      function closeReadme(){ readmeBackdrop.hidden = true; }
+
+      if (readmeBtn) {
+        readmeBtn.addEventListener("click", openReadme);
+        readmeClose.addEventListener("click", closeReadme);
+        readmeBackdrop.addEventListener("click", function(e){
+          if (e.target === readmeBackdrop) closeReadme();
+        });
+        document.addEventListener("keydown", function(e){
+          if (e.key === "Escape" && !readmeBackdrop.hidden) closeReadme();
+        });
       }
 
       // ---------- chip row (shared by all modes) ----------

@@ -4,6 +4,10 @@ A single-file HTML study hub covering **51 UTHS classes** — the 7 classes actu
 
 Open [`valence-lab.html`](valence-lab.html) in any browser. No build step, no server required to use it — it's one self-contained file. (A `.claude/launch.json` is included for local dev, so unit-aware URL routing works under a real `http://` origin — plain `file://` works too in a normal browser, just not inside some sandboxed preview tools.)
 
+`index.html` at the repo root is a thin redirect to `valence-lab.html` (preserving any URL hash/query) so GitHub Pages has a landing page at the site's root URL.
+
+Every page has a top bar with a **Read Me** button (opens this README, rendered in-page via [marked.js](https://github.com/markedjs/marked), no need to leave the app) and a **GitHub ↗** link back to this repo.
+
 ## Classes actually taken (built from real Canvas content)
 
 | Class | Questions | Flashcards | Teaching modules |
