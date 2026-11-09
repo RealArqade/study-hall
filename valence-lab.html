@@ -347,6 +347,59 @@
       .modal-body th{background:var(--surface-2);}
       .modal-fallback{color:var(--ink-dim);}
       .modal-fallback a{color:var(--accent);}
+
+      /* ---- account / avatar ---- */
+      .site-nav-avatar{
+        width:22px; height:22px; border-radius:50%; background:var(--accent); color:var(--surface);
+        display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+        margin-right:6px; vertical-align:middle; flex-shrink:0;
+      }
+
+      /* ---- auth modal ---- */
+      .auth-social-row{display:flex; flex-direction:column; gap:8px; margin-bottom:14px;}
+      .auth-social-btn{width:100%; text-align:center;}
+      .auth-divider{
+        display:flex; align-items:center; gap:10px; color:var(--ink-dim); font-size:11px;
+        text-transform:uppercase; letter-spacing:.06em; margin:14px 0;
+      }
+      .auth-divider::before, .auth-divider::after{content:""; flex:1; height:1px; background:var(--border);}
+      .auth-input{
+        width:100%; padding:10px 12px; margin-bottom:8px; border-radius:8px; border:1px solid var(--border);
+        background:var(--surface-2); color:var(--ink); font-family:'IBM Plex Sans'; font-size:13.5px;
+      }
+      .auth-input:focus{outline:none; border-color:var(--accent);}
+      .auth-email-actions{display:flex; gap:8px; margin-top:6px;}
+      .auth-email-actions .btn{flex:1; padding:10px 12px; font-size:13px;}
+      .auth-error{color:var(--bad); font-size:12.5px; margin-top:10px;}
+
+      /* ---- profile modal ---- */
+      .profile-who{display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+      .profile-avatar{
+        width:44px; height:44px; border-radius:50%; background:var(--accent); color:var(--surface);
+        display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; flex-shrink:0;
+      }
+      .profile-name{font-weight:700; font-size:15px; color:var(--ink);}
+      .profile-email{font-size:12px; color:var(--ink-dim);}
+      .profile-stats{
+        display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px;
+      }
+      .profile-stat{
+        background:var(--surface-2); border-radius:10px; padding:10px 12px; text-align:center;
+      }
+      .profile-stat .v{font-family:'IBM Plex Mono',monospace; font-size:19px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums;}
+      .profile-stat .l{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.06em; margin-top:2px;}
+      .profile-scores-heading{
+        font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-dim);
+        margin:4px 0 8px; font-weight:700;
+      }
+      .profile-score-list{display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; margin-bottom:16px;}
+      .profile-score-item{
+        display:flex; justify-content:space-between; align-items:center; gap:10px;
+        background:var(--surface-2); border-radius:8px; padding:8px 10px; font-size:12.5px;
+      }
+      .profile-score-item .psi-name{color:var(--ink); font-weight:600;}
+      .profile-score-item .psi-score{font-family:'IBM Plex Mono',monospace; color:var(--ink-dim); white-space:nowrap;}
+      .profile-empty{color:var(--ink-dim); font-size:12.5px;}
     </style>
   </head>
   <body>
@@ -356,6 +409,7 @@
       <nav class="site-nav">
         <a href="#/" class="site-nav-brand">Study Hall</a>
         <div class="site-nav-links">
+          <button class="site-nav-btn" id="authBtn" type="button">Sign In</button>
           <button class="site-nav-btn" id="readmeBtn" type="button">Read Me</button>
           <a class="site-nav-btn" href="https://github.com/RealArqade/study-hall" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
@@ -368,6 +422,43 @@
             <button class="modal-close" id="readmeClose" type="button" aria-label="Close">✕</button>
           </div>
           <div class="modal-body mono" id="readmeBody">Loading…</div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="authBackdrop" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+          <div class="modal-head">
+            <h2 id="authModalTitle">Sign In</h2>
+            <button class="modal-close" id="authClose" type="button" aria-label="Close">✕</button>
+          </div>
+          <div class="modal-body" id="authBody">
+            <div class="auth-social-row">
+              <button class="btn btn-ghost auth-social-btn" id="authGoogleBtn" type="button">Continue with Google</button>
+              <button class="btn btn-ghost auth-social-btn" id="authGithubBtn" type="button">Continue with GitHub</button>
+              <button class="btn btn-ghost auth-social-btn" id="authMicrosoftBtn" type="button">Continue with Microsoft</button>
+            </div>
+            <div class="auth-divider"><span>or</span></div>
+            <form id="authEmailForm">
+              <input type="email" id="authEmail" class="auth-input" placeholder="Email" required autocomplete="email">
+              <input type="password" id="authPassword" class="auth-input" placeholder="Password" required minlength="6" autocomplete="current-password">
+              <div class="auth-email-actions">
+                <button type="submit" class="btn btn-primary" id="authSignInBtn">Sign In</button>
+                <button type="button" class="btn btn-ghost" id="authSignUpBtn">Create Account</button>
+              </div>
+            </form>
+            <div class="auth-error" id="authError" hidden></div>
+            <button class="btn btn-ghost" id="authGuestBtn" type="button" style="width:100%; margin-top:12px;">Continue as Guest</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="profileBackdrop" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+          <div class="modal-head">
+            <h2 id="profileModalTitle">Your Progress</h2>
+            <button class="modal-close" id="profileClose" type="button" aria-label="Close">✕</button>
+          </div>
+          <div class="modal-body" id="profileBody">Loading…</div>
         </div>
       </div>
 
@@ -468,9 +559,96 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" defer></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+      import {
+        getAuth, onAuthStateChanged, signInWithPopup, signInAnonymously, signOut,
+        GoogleAuthProvider, GithubAuthProvider, OAuthProvider,
+        createUserWithEmailAndPassword, signInWithEmailAndPassword
+      } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+      import {
+        getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, increment, serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+      import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app-check.js";
+
+      // App Check guards Authentication (and Firestore) against bots/scripted abuse
+      // at the Firebase/Google infrastructure level, instead of client-side heuristics.
+      // Set this to the reCAPTCHA v3 site key from Firebase Console -> App Check ->
+      // your web app -> register a provider (reCAPTCHA v3). Left blank until set;
+      // App Check init is skipped (not enforced) when empty, so nothing breaks.
+      var RECAPTCHA_V3_SITE_KEY = "";
+
+      var firebaseConfig = {
+        apiKey: "AIzaSyCb5WW0VCwDAdw30Uyio1rtJYkU4EjL2-c",
+        authDomain: "arqadestudyhall.firebaseapp.com",
+        projectId: "arqadestudyhall",
+        storageBucket: "arqadestudyhall.firebasestorage.app",
+        messagingSenderId: "821203235992",
+        appId: "1:821203235992:web:3a876ed00918b8fe8e4ced",
+        measurementId: "G-653E6VRSPC"
+      };
+
+      try {
+        var app = initializeApp(firebaseConfig);
+        try { getAnalytics(app); } catch (e) {}
+        if (RECAPTCHA_V3_SITE_KEY) {
+          try {
+            initializeAppCheck(app, {
+              provider: new ReCaptchaV3Provider(RECAPTCHA_V3_SITE_KEY),
+              isTokenAutoRefreshEnabled: true
+            });
+          } catch (e) {}
+        }
+        var auth = getAuth(app);
+        var db = getFirestore(app);
+
+        window.SH_FIREBASE = {
+          auth: auth, db: db,
+          onAuthStateChanged: onAuthStateChanged,
+          signInWithPopup: signInWithPopup,
+          signInAnonymously: signInAnonymously,
+          signOut: signOut,
+          GoogleAuthProvider: GoogleAuthProvider,
+          GithubAuthProvider: GithubAuthProvider,
+          OAuthProvider: OAuthProvider,
+          createUserWithEmailAndPassword: createUserWithEmailAndPassword,
+          signInWithEmailAndPassword: signInWithEmailAndPassword,
+          doc: doc, getDoc: getDoc, setDoc: setDoc, updateDoc: updateDoc,
+          onSnapshot: onSnapshot, increment: increment, serverTimestamp: serverTimestamp
+        };
+      } catch (e) {
+        window.SH_FIREBASE = null;
+      }
+      window.dispatchEvent(new Event("sh-firebase-ready"));
+    </script>
     <script>
     (function(){
       "use strict";
+
+      // ---------- bot / automation gate ----------
+      // Best-effort client-side deterrent only: a static site has no server to truly
+      // gate access, and a non-JS fetch (curl, a scraper that ignores JS) never runs
+      // this check at all. This blocks the common case of headless/automated
+      // *browsers* (Selenium, Puppeteer, Playwright, PhantomJS) from loading and
+      // interacting with the app. Login-specific bot abuse is handled separately by
+      // Firebase App Check, not by this heuristic.
+      function looksAutomated(){
+        try {
+          if (navigator.webdriver) return true;
+          if (/HeadlessChrome|PhantomJS|Puppeteer|Playwright|Selenium|Headless/i.test(navigator.userAgent || "")) return true;
+          if (window.callPhantom || window._phantom || window.__nightmare) return true;
+        } catch (e) {}
+        return false;
+      }
+      if (looksAutomated()) {
+        document.body.innerHTML =
+          '<div style="font-family:system-ui,sans-serif; max-width:420px; margin:80px auto; text-align:center; color:#344;">' +
+            '<h1 style="font-size:20px; margin-bottom:10px;">Automated access isn’t allowed</h1>' +
+            '<p style="color:#678; font-size:14px; line-height:1.5;">Study Hall is for real students studying — please open this page in a normal, non-automated browser.</p>' +
+          '</div>';
+        return;
+      }
 
       var CHEM_UNITS = [
         {id:"u1", label:"Atomic Structure", num:1},
@@ -6573,6 +6751,287 @@
         });
       }
 
+      // ---------- accounts ----------
+      var authBtn = document.getElementById("authBtn");
+      var authBackdrop = document.getElementById("authBackdrop");
+      var authClose = document.getElementById("authClose");
+      var authError = document.getElementById("authError");
+      var authEmailForm = document.getElementById("authEmailForm");
+      var authEmail = document.getElementById("authEmail");
+      var authPassword = document.getElementById("authPassword");
+      var authSignUpBtn = document.getElementById("authSignUpBtn");
+      var authGuestBtn = document.getElementById("authGuestBtn");
+      var authGoogleBtn = document.getElementById("authGoogleBtn");
+      var authGithubBtn = document.getElementById("authGithubBtn");
+      var authMicrosoftBtn = document.getElementById("authMicrosoftBtn");
+      var profileBackdrop = document.getElementById("profileBackdrop");
+      var profileClose = document.getElementById("profileClose");
+      var profileBody = document.getElementById("profileBody");
+
+      var fb = null; // window.SH_FIREBASE, once ready
+      var currentUser = null;
+      var currentUserData = null; // cached Firestore doc for the signed-in (non-anonymous) user
+      var userDocUnsub = null;
+
+      function initialsFor(user){
+        var name = (user.displayName || user.email || "?").trim();
+        return name.charAt(0).toUpperCase();
+      }
+
+      function openAuthModal(){ authError.hidden = true; authBackdrop.hidden = false; }
+      function closeAuthModal(){ authBackdrop.hidden = true; }
+      function showAuthError(err){
+        authError.textContent = (err && err.message) ? err.message.replace(/^Firebase:\s*/, "") : "Something went wrong. Try again.";
+        authError.hidden = false;
+      }
+
+      function openProfileModal(){
+        profileBackdrop.hidden = false;
+        renderProfile();
+        flushPendingFlashcardReviews();
+      }
+      function closeProfileModal(){ profileBackdrop.hidden = true; }
+
+      function renderProfile(){
+        if (!currentUser) { profileBody.innerHTML = '<p class="profile-empty">Not signed in.</p>'; return; }
+        var name = currentUser.displayName || (currentUser.isAnonymous ? "Guest" : currentUser.email) || "Account";
+        var email = currentUser.isAnonymous ? "Guest session — progress isn’t saved to an account" : (currentUser.email || "");
+        var html = '<div class="profile-who">' +
+          '<div class="profile-avatar">' + (currentUser.isAnonymous ? "G" : initialsFor(currentUser)) + '</div>' +
+          '<div><div class="profile-name">' + name + '</div><div class="profile-email">' + email + '</div></div>' +
+          '</div>';
+
+        if (currentUser.isAnonymous) {
+          html += '<p class="profile-empty">Guest accounts don’t sync progress or count toward stats. Sign in with Google, GitHub, Microsoft, or email to start tracking your study stats.</p>';
+          html += '<button class="btn btn-ghost" id="signOutBtn" style="width:100%;">Sign Out</button>';
+        } else {
+          var d = currentUserData || {};
+          var totals = d.totals || { questionsAnswered: 0, correctAnswers: 0, flashcardsReviewed: 0 };
+          var pct = totals.questionsAnswered ? Math.round(totals.correctAnswers / totals.questionsAnswered * 100) : 0;
+          html += '<div class="profile-stats">' +
+            '<div class="profile-stat"><div class="v">' + (totals.questionsAnswered||0) + '</div><div class="l">Questions answered</div></div>' +
+            '<div class="profile-stat"><div class="v">' + pct + '%</div><div class="l">Accuracy</div></div>' +
+            '<div class="profile-stat"><div class="v">' + (d.streak||0) + '</div><div class="l">Day streak</div></div>' +
+            '<div class="profile-stat"><div class="v">' + (totals.flashcardsReviewed||0) + '</div><div class="l">Flashcards reviewed</div></div>' +
+          '</div>';
+
+          var bestScores = d.bestScores || {};
+          var slugs = Object.keys(bestScores);
+          html += '<div class="profile-scores-heading">Best scores</div>';
+          if (slugs.length === 0) {
+            html += '<p class="profile-empty">Finish a quiz round to see your best scores here.</p>';
+          } else {
+            html += '<div class="profile-score-list">' + slugs.map(function(slug){
+              var c = findCourse(slug);
+              var entry = bestScores[slug];
+              var name2 = c ? c.name : slug;
+              return '<div class="profile-score-item"><span class="psi-name">' + name2 + '</span><span class="psi-score">' + entry.score + '/' + entry.total + '</span></div>';
+            }).join("") + '</div>';
+          }
+          html += '<button class="btn btn-ghost" id="signOutBtn" style="width:100%;">Sign Out</button>';
+        }
+        profileBody.innerHTML = html;
+        var signOutBtn = document.getElementById("signOutBtn");
+        if (signOutBtn) signOutBtn.addEventListener("click", function(){
+          fb.signOut(fb.auth).catch(function(){});
+          closeProfileModal();
+        });
+      }
+
+      function todayStr(){
+        var d = new Date();
+        return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+      }
+
+      function ensureUserDoc(user){
+        var ref = fb.doc(fb.db, "users", user.uid);
+        return fb.getDoc(ref).then(function(snap){
+          if (snap.exists()) return { ref: ref, data: snap.data() };
+          var initial = {
+            displayName: user.displayName || null,
+            email: user.email || null,
+            createdAt: fb.serverTimestamp(),
+            lastActiveDate: todayStr(),
+            streak: 1,
+            totals: { questionsAnswered: 0, correctAnswers: 0, flashcardsReviewed: 0 },
+            bestScores: {}
+          };
+          return fb.setDoc(ref, initial).then(function(){ return { ref: ref, data: initial }; });
+        });
+      }
+
+      function mergeLocalBestScores(ref, data){
+        // On first sync, fold in any best scores already sitting in localStorage
+        // (from playing before signing in) rather than discarding them.
+        var bestScores = data.bestScores || {};
+        var changed = false;
+        COURSES.forEach(function(c){
+          var local = safeGet("studyhall_best_" + c.slug);
+          if (!local) return;
+          var localScore = parseInt(local, 10);
+          var existing = bestScores[c.slug];
+          if (!existing || localScore > existing.score) {
+            bestScores[c.slug] = { score: localScore, total: SESSION_SIZE };
+            changed = true;
+          }
+        });
+        if (changed) {
+          fb.updateDoc(ref, { bestScores: bestScores }).catch(function(){});
+        }
+      }
+
+      function touchStreak(ref, data){
+        var today = todayStr();
+        if (data.lastActiveDate === today) return;
+        var yesterday = new Date(Date.now() - 86400000);
+        var yStr = yesterday.getFullYear() + "-" + String(yesterday.getMonth()+1).padStart(2,"0") + "-" + String(yesterday.getDate()).padStart(2,"0");
+        var newStreak = (data.lastActiveDate === yStr) ? (data.streak||0) + 1 : 1;
+        fb.updateDoc(ref, { lastActiveDate: today, streak: newStreak }).catch(function(){});
+        data.lastActiveDate = today;
+        data.streak = newStreak;
+      }
+
+      function recordQuizResult(slug, score, total){
+        // Anonymous (guest) sessions never sync credit to Firestore.
+        if (!fb || !currentUser || currentUser.isAnonymous) return;
+        var ref = fb.doc(fb.db, "users", currentUser.uid);
+        var updates = {
+          "totals.questionsAnswered": fb.increment(total),
+          "totals.correctAnswers": fb.increment(score)
+        };
+        var existing = (currentUserData && currentUserData.bestScores && currentUserData.bestScores[slug]) || null;
+        if (!existing || score > existing.score) {
+          updates["bestScores." + slug] = { score: score, total: total };
+        }
+        fb.updateDoc(ref, updates).catch(function(){});
+        if (currentUserData) touchStreak(ref, currentUserData);
+      }
+
+      // ---- flashcard review crediting: must be visible for ~the estimated reading
+      // time, and only while the tab is actually visible/focused, before it counts.
+      var fcPendingReviews = 0;
+      var fcDwellCardKey = null;
+      var fcDwellAccumMs = 0;
+      var fcDwellCredited = false;
+      var fcDwellHadTrustedInteraction = false;
+      var fcDwellLastTick = null;
+
+      function estimateReadMs(card){
+        var words = ((card.t||"") + " " + (card.d||"")).trim().split(/\s+/).filter(Boolean).length;
+        var ms = words / 220 * 60000; // ~220 wpm silent reading speed
+        return Math.max(1200, Math.min(12000, ms));
+      }
+
+      function fcDwellReset(){
+        if (fcList.length === 0) { fcDwellCardKey = null; return; }
+        var card = fcList[fci];
+        var key = card.u + "|" + card.t;
+        if (key === fcDwellCardKey) return;
+        fcDwellCardKey = key;
+        fcDwellAccumMs = 0;
+        fcDwellCredited = false;
+        fcDwellHadTrustedInteraction = false;
+        fcDwellLastTick = Date.now();
+      }
+
+      function fcDwellMarkTrusted(e){
+        if (e && e.isTrusted) fcDwellHadTrustedInteraction = true;
+      }
+
+      function fcDwellTick(){
+        if (mode !== "cards" || fcList.length === 0) { fcDwellLastTick = null; return; }
+        fcDwellReset();
+        if (document.visibilityState !== "visible" || !document.hasFocus()) { fcDwellLastTick = Date.now(); return; }
+        var now = Date.now();
+        if (fcDwellLastTick) fcDwellAccumMs += (now - fcDwellLastTick);
+        fcDwellLastTick = now;
+
+        if (!fcDwellCredited && fcDwellHadTrustedInteraction) {
+          var card = fcList[fci];
+          if (card && fcDwellAccumMs >= estimateReadMs(card)) {
+            fcDwellCredited = true;
+            fcPendingReviews++;
+          }
+        }
+      }
+      setInterval(fcDwellTick, 300);
+
+      function flushPendingFlashcardReviews(){
+        if (fcPendingReviews <= 0) return;
+        if (!fb || !currentUser || currentUser.isAnonymous) { fcPendingReviews = 0; return; }
+        var ref = fb.doc(fb.db, "users", currentUser.uid);
+        var n = fcPendingReviews;
+        fcPendingReviews = 0;
+        fb.updateDoc(ref, { "totals.flashcardsReviewed": fb.increment(n) }).catch(function(){ fcPendingReviews += n; });
+      }
+
+      function onAuthReady(firebase){
+        fb = firebase;
+        if (!fb) { authBtn.hidden = true; return; } // Firebase failed to init (e.g. offline, blocked, or Artifact sandbox)
+
+        fb.onAuthStateChanged(fb.auth, function(user){
+          currentUser = user;
+          if (userDocUnsub) { userDocUnsub(); userDocUnsub = null; }
+          currentUserData = null;
+
+          if (!user) {
+            authBtn.textContent = "Sign In";
+            return;
+          }
+          authBtn.innerHTML = '<span class="site-nav-avatar">' + (user.isAnonymous ? "G" : initialsFor(user)) + '</span>' + (user.isAnonymous ? "Guest" : (user.displayName || "Account"));
+
+          if (user.isAnonymous) return; // no Firestore doc/credit for guest sessions
+
+          ensureUserDoc(user).then(function(res){
+            currentUserData = res.data;
+            mergeLocalBestScores(res.ref, res.data);
+            touchStreak(res.ref, res.data);
+            userDocUnsub = fb.onSnapshot(res.ref, function(snap){
+              if (snap.exists()) currentUserData = snap.data();
+              if (!profileBackdrop.hidden) renderProfile();
+            });
+          }).catch(function(){});
+        });
+
+        authBtn.addEventListener("click", function(){
+          if (currentUser) openProfileModal(); else openAuthModal();
+        });
+        authClose.addEventListener("click", closeAuthModal);
+        authBackdrop.addEventListener("click", function(e){ if (e.target === authBackdrop) closeAuthModal(); });
+        profileClose.addEventListener("click", closeProfileModal);
+        profileBackdrop.addEventListener("click", function(e){ if (e.target === profileBackdrop) closeProfileModal(); });
+        document.addEventListener("keydown", function(e){
+          if (e.key !== "Escape") return;
+          if (!authBackdrop.hidden) closeAuthModal();
+          if (!profileBackdrop.hidden) closeProfileModal();
+        });
+
+        function popupSignIn(provider){
+          fb.signInWithPopup(fb.auth, provider).then(function(){ closeAuthModal(); }).catch(showAuthError);
+        }
+        authGoogleBtn.addEventListener("click", function(){ popupSignIn(new fb.GoogleAuthProvider()); });
+        authGithubBtn.addEventListener("click", function(){ popupSignIn(new fb.GithubAuthProvider()); });
+        authMicrosoftBtn.addEventListener("click", function(){ popupSignIn(new fb.OAuthProvider("microsoft.com")); });
+        authGuestBtn.addEventListener("click", function(){
+          fb.signInAnonymously(fb.auth).then(function(){ closeAuthModal(); }).catch(showAuthError);
+        });
+        authEmailForm.addEventListener("submit", function(e){
+          e.preventDefault();
+          fb.signInWithEmailAndPassword(fb.auth, authEmail.value, authPassword.value)
+            .then(function(){ closeAuthModal(); }).catch(showAuthError);
+        });
+        authSignUpBtn.addEventListener("click", function(){
+          fb.createUserWithEmailAndPassword(fb.auth, authEmail.value, authPassword.value)
+            .then(function(){ closeAuthModal(); }).catch(showAuthError);
+        });
+      }
+
+      window.addEventListener("beforeunload", flushPendingFlashcardReviews);
+      window.addEventListener("pagehide", flushPendingFlashcardReviews);
+
+      if (window.SH_FIREBASE !== undefined) { onAuthReady(window.SH_FIREBASE); }
+      else { window.addEventListener("sh-firebase-ready", function(){ onAuthReady(window.SH_FIREBASE); }, { once: true }); }
+
       // ---------- chip row (shared by all modes) ----------
       var chipRow = document.getElementById("chipRow");
       function onUnitsChanged(){
@@ -6677,6 +7136,7 @@
       var learnView = document.getElementById("learnView");
 
       function setMode(m, updateHash){
+        if (mode === "cards" && m !== "cards") flushPendingFlashcardReviews();
         mode = m;
         modeQuizBtn.setAttribute("aria-pressed", m === "quiz" ? "true" : "false");
         modeCardsBtn.setAttribute("aria-pressed", m === "cards" ? "true" : "false");
@@ -6800,6 +7260,7 @@
         var best = parseInt(safeGet(bestScoreKey()) || "0", 10);
         var pct = Math.round(score / session.length * 100);
         if (score > best) safeSet(bestScoreKey(), String(score));
+        recordQuizResult(currentCourse.slug, score, session.length);
 
         var missHtml = misses.length ? misses.map(function(m){
           return '<div class="miss-item"><div class="mq">' + m.q + '</div><div class="ma">Correct answer: <b>' + m.choices[m.correctIdx] + '</b></div></div>';
@@ -6876,17 +7337,20 @@
         fcCard.classList.toggle("flipped", flipped);
       }
 
-      fcCard.addEventListener("click", function(){ flipped = !flipped; renderFlashcard(); });
-      fcFlip.addEventListener("click", function(){ flipped = !flipped; renderFlashcard(); });
-      fcPrev.addEventListener("click", function(){
+      fcCard.addEventListener("click", function(e){ fcDwellMarkTrusted(e); flipped = !flipped; renderFlashcard(); });
+      fcFlip.addEventListener("click", function(e){ fcDwellMarkTrusted(e); flipped = !flipped; renderFlashcard(); });
+      fcPrev.addEventListener("click", function(e){
         if (fcList.length === 0) return;
+        fcDwellMarkTrusted(e);
         fci = (fci - 1 + fcList.length) % fcList.length; flipped = false; renderFlashcard();
       });
-      fcNext.addEventListener("click", function(){
+      fcNext.addEventListener("click", function(e){
         if (fcList.length === 0) return;
+        fcDwellMarkTrusted(e);
         fci = (fci + 1) % fcList.length; flipped = false; renderFlashcard();
       });
-      fcShuffle.addEventListener("click", function(){
+      fcShuffle.addEventListener("click", function(e){
+        fcDwellMarkTrusted(e);
         fcList = shuffle(fcList); fci = 0; flipped = false; renderFlashcard();
       });
       // "Sort #" restores the deck's natural order — unit number ascending, then authored order within a unit.
