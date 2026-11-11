@@ -40,7 +40,7 @@ Every other course UTHS offers (2026-2027 catalog), each with 4 units, 16 quiz q
 
 - **Quiz** — multiple-choice drills with instant feedback, an explanation for every answer, a live score/streak, and a round-end summary that lists exactly what you missed. Each round pulls a fresh random set of up to 12 questions from whatever units you've selected.
 - **Flashcards** — flip-card review of key terms and definitions. Shuffle, step through with arrow keys, tap to flip, or hit **Sort #** to snap the deck back into unit-number order after shuffling.
-- **Learn** — short teaching modules grouped by lesson, covering the concept explanations behind each unit. Chemistry has its original 101 modules (grouped by real Canvas lesson); each of the 44 catalog courses has 48 modules (12 per unit, 3 lessons/unit). The other 6 real-Canvas classes (Algebra 2, Art Appreciation, Computer Science 1, English 2, Personal Financial Literacy, US History) don't have Learn mode yet — 45 of 51 courses have it.
+- **Learn** — short teaching modules grouped by lesson, covering the concept explanations behind each unit. Chemistry has its original 101 modules (grouped by real Canvas lesson); Algebra 2 has 53 modules built from its real Canvas lessons (including two not-yet-unlocked lessons written from their real module/page titles plus standard curriculum sourcing, matching the course's style); each of the 44 catalog courses has 48 modules (12 per unit, 3 lessons/unit). The other 5 real-Canvas classes (Art Appreciation, Computer Science 1, English 2, Personal Financial Literacy, US History) don't have Learn mode yet — 46 of 51 courses have it.
 
 ## Navigation
 
